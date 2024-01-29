@@ -11,3 +11,5 @@ pytorch-sparse 2.1.0
 
 All datasets are downloaded from package torch_geometric and saved as series of .pt file without any preprocess procedure. 
 
+email: wangjinlu@emails.bjut.edu.cn   Any questions please contact with me.
+
