@@ -68,14 +68,14 @@ def adj_norm(adj):
     def sp_eye(n):
         indices = torch.Tensor([list(range(n)), list(range(n))])
         values = torch.FloatTensor([1.0] * n)
-        return torch.sparse_coo_tensor(indices=indices, values=values, size=[n, n])  # 构建自环矩阵（单位）
+        return torch.sparse_coo_tensor(indices=indices, values=values, size=[n, n])  
 
     device = adj.device
     n = adj.shape[0]
     adj = adj + sp_eye(n).to(device)
-    adj = adj.coalesce()  # 将稠密表示变为稀疏表示
-    adj_indices = adj.indices()  # 获得非0元素的索引
-    adj_values = adj.values()  # 获得非0元素的值
+    adj = adj.coalesce()  
+    adj_indices = adj.indices()  
+    adj_values = adj.values()  
     d_values = torch.spmm(adj, torch.FloatTensor([[1.0]] * n).to(device)).pow(-0.5).flatten()
     d_indices = torch.tensor([list(range(n)), list(range(n))]).to(device)
     out_indices, out_values = spspmm(
@@ -105,13 +105,13 @@ def load_dataset(dataset_name, norm=True, device=None):
     return feat, label, n, nfeat, nclass, adj
 
 def to_normalized_sparsetensor(edge_index, N, mode='DAD'):
-    row, col = edge_index  # adj>0 的索引赋值给 row 和 col
+    row, col = edge_index 
     adj = SparseTensor(row=row, col=col, sparse_sizes=(N, N))
-    adj = adj.set_diag() # pyg库的方法，将邻接矩阵对角线元素设置为1
-    deg = adj.sum(dim=1).to(torch.float) # 计算dim=1维度的加和，生成度矩阵
+    adj = adj.set_diag() 
+    deg = adj.sum(dim=1).to(torch.float)
     deg_inv_sqrt = deg.pow(-0.5)  # D（-1/2）
-    deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0  # 将deg_inv_sqrt中的无穷大值替换为0
+    deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0  
     if mode == 'DA':
-        return deg_inv_sqrt.view(-1,1) * deg_inv_sqrt.view(-1,1) * adj  # .view(-1,1) 第二个维度上是1,第一个维度随之计算
+        return deg_inv_sqrt.view(-1,1) * deg_inv_sqrt.view(-1,1) * adj  
     if mode == 'DAD':
-        return deg_inv_sqrt.view(-1, 1) * adj * deg_inv_sqrt.view(1, -1)  # 不理解为什么要把deg_inv_sqrt弄成列向量。
+        return deg_inv_sqrt.view(-1, 1) * adj * deg_inv_sqrt.view(1, -1)  
