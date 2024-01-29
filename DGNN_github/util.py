@@ -87,7 +87,7 @@ def adj_norm(adj):
         indexA=out_indices, valueA=out_values,
         indexB=d_indices, valueB=d_values,
         m=n, k=n, n=n
-    )  # D(-1/2) A D (-1/2)
+    )  
     return torch.sparse_coo_tensor(indices=out_indices, values=out_values, size=[n, n]).to(device)
 
 
@@ -109,7 +109,7 @@ def to_normalized_sparsetensor(edge_index, N, mode='DAD'):
     adj = SparseTensor(row=row, col=col, sparse_sizes=(N, N))
     adj = adj.set_diag() 
     deg = adj.sum(dim=1).to(torch.float)
-    deg_inv_sqrt = deg.pow(-0.5)  # D（-1/2）
+    deg_inv_sqrt = deg.pow(-0.5)  
     deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0  
     if mode == 'DA':
         return deg_inv_sqrt.view(-1,1) * deg_inv_sqrt.view(-1,1) * adj  
