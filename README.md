@@ -2,8 +2,11 @@
 Runtime Environment:
 
 python 3.8
+
 numpy 1.20.3
+
 pytorch 1.8.0
+
 pytorch-sparse 0.6.11
 
 All datasets are downloaded from package torch_geometric and saved as series of .pt file without any preprocess procedure. 
